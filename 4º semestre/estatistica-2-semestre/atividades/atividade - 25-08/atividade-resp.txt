@@ -1,0 +1,12 @@
+1 - A diferença entre "amostra" e "população" se da por conta da segunda palavra ser o objeto de pesquisa, enquanto a primeira seria, no caso do exemplo, a pessoa a ser questionada.
+    EX: temos, em uma população, 3.000 pessoas, cada uma delas representa uma amostra que pode ser coletada de uma informação qualquer.
+
+2 - A amostragem é o processo que determina os elementos que serão selecionados de uma população estatísticas.
+
+3 - * Custo e tempo: Trabalhar com amostras é mais eficiente e econômico.
+    * Viabilidade prática: Trabalhar com amostras é mais viável em casos de populações grandes ou dispersas.
+    * Precisão e representatividade: Trabalhar com amostras pode ser mais preciso e representativo da população.
+
+4 - 588 // olhar certinho
+
+(terminar os exercicios)

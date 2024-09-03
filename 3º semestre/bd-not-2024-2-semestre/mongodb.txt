@@ -1,0 +1,230 @@
+// Exibe todos os bancos de dados já existentes
+show dbs;
+
+// Selecionando um novo banco de dados para trabalho
+// (se não existir, será criado EM MEMÓRIA e passará
+// a existir EM DISCO quando algo for efetivamente
+// inserido nele)
+use estoque;
+
+// Exibindo as coleções do banco de dados ativo
+show collections;
+
+// Primeira inserção
+db.produtos.insertOne({
+	nome: "Vassoura de piaçava",
+	preco: 31.77,
+	categoria: "Limpeza"
+});
+
+// Segunda inserção
+db.produtos.insertOne({
+	nome: "Café",
+	marca: "Dubom",
+	quantidade: 500,
+	unidade: "g",
+	preco: 22.38,
+	categoria: "Alimentos e bebidas",
+	estoque: 52
+});
+
+// Terceira inserção
+db.produtos.insertOne({
+	nome_oficial: "República Francesa",
+	nome_comum: "França",
+	capital: "Paris",
+	continente: "Europa",
+	chefe_estado: "Emmanuel Macron",
+	lingua_oficial: "francês"	
+});
+
+// Exibindo os produtos cadastrados
+db.produtos.find();
+
+// Exibindo apenas o produto cujo nome é igual a "Café" (case sensitive)
+db.produtos.find({ nome: "Café" });
+
+// Exibindo apenas o produto cujo nome é igual a "café" (case INSENSITIVE)
+// (usando expressão regular - regex)
+db.produtos.find({ nome: /^café$/i });
+
+// Inserindo um produto com subdocumento
+db.produtos.insertOne({
+	nome: "Biscoito",
+	marca: "Crocantão",
+	quantidade: 200,
+	unidade: "g",
+	preco: 8.19,
+	categoria: "Alimentos e bebidas",
+	estoque: 100,
+	fornecedor: {
+		nome: "Indústria de Alimentos Bacana S/A",
+		cnpj: "01.234.567/0001-89",
+		email: "contato@bacana.ind.br",
+		representante: "Astolfo Alvarenga"
+	}	
+});
+
+// Inserindo um outro produto, com dois subdocumentos
+db.produtos.insertOne({
+	nome: "Doce de leite",
+	marca: "Mineirim",
+	preco: 17.65,
+	fornecedor: {
+		nome: "Indústria de Alimentos Bacana S/A",
+		cnpj: "01.234.567/0001-89"
+	},
+	informacao_nutricional: {
+		acucares_g: 75,
+		gordura_saturada_g: 12,
+		proteina_g: 13
+	}
+});
+
+// Listando os produtos fornecidos pela empresa cujo CNPJ é 01.234.567/0001-89
+db.produtos.find({ "fornecedor.cnpj": "01.234.567/0001-89" });
+
+// Produto com mais de um fornecedor (vetor de subdocumentos)
+db.produtos.insertOne({
+	nome: "Paçoca",
+	marca: "Junina",
+	preco: 22.48,
+	fornecedor: [
+		{
+			nome: "Indústria de Alimentos Bacana S/A",
+			cnpj: "01.234.567/0001-89"
+		},
+		{
+			nome: "Distribuidora de Doces Pingo de Mel Ltda.",
+			cnpj: "98.765.432/0001-10"
+		}
+	]
+});
+
+// Listando os produtos por ordem alfabética de nome (1 = ordem crescente)
+db.produtos.find().sort({ nome: 1 });
+
+// Listando os produtos por ordem decrescente (-1) de nome
+db.produtos.find().sort({ nome: -1 });
+
+// Inserção de produto com campo multivalorado
+db.produtos.insertOne({
+	nome: "Bicarbonato de sódio",
+	marca: "Q-Rende",
+	preco: 3.45,
+	categoria: [
+		"Alimentos e bebidas",
+		"Limpeza"
+	],
+	fornecedor: {
+		nome: "Distribuidora de Doces Pingo de Mel Ltda.",
+		cnpj: "98.765.432/0001-10"
+	}
+});
+
+// Pesquisando produtos da categoria "Limpeza"
+db.produtos.find({ categoria: "Limpeza" });
+
+// Pesquisando produtos que NÃO SÃO da categoria "Limpeza"
+// $ne = not equal (não igual, diferente)
+db.produtos.find({ categoria: { $ne: "Limpeza" } });
+
+// Listando apenas produtos que NÃO TÊM o campo "categoria"
+db.produtos.find({ categoria: { $exists: false } });
+
+// Listando apenas produtos cujo fornecedor tem o campo "email"
+db.produtos.find({ "fornecedor.email": { $exists: true} });
+
+// Procurando o produto "Café" pelo seu _id e alterando o valor
+// de campos já existentes
+db.produtos.updateOne(
+  { _id: ObjectId('66c3cd1cfb179a4a05127651') }, // Aqui cada um tem o seu
+  {
+    $set: {
+      marca: "Torra Premium",
+      preco: 40.27
+    }
+  }
+);
+
+// Atualizando um documento para inserir um campo que não
+// existia anteriormente
+db.produtos.updateOne(
+  { nome: "Paçoca" },
+  {
+    $set: {
+      categoria: "Alimentos e bebidas"
+    }
+  }
+);
+
+// Exibindo o produto "Paçoca", mostrando apenas os campos "nome", "preco"
+// e "categoria"
+db.produtos.find({ nome: "Paçoca" }, { nome: true, preco: true, categoria: true });
+
+// Repetindo a consulta acima, trazendo os produtos "Paçoca" e "Café"
+db.produtos.find(
+  { $or: [ { nome: "Paçoca" }, { nome: "Café" } ] },
+  { nome: true, preco: true, categoria: true }
+);
+
+// Aumentando o preço do "Doce de leite" em R$ 2,60
+// $inc = INCremento
+db.produtos.updateOne(
+  { nome: "Doce de leite" },
+  {
+    $inc: {
+      preco: 2.60
+    }
+  }
+);
+
+// Diminuindo o estoque do "Biscoito" em 10 unidades
+db.produtos.updateOne(
+  { nome: "Biscoito" },
+  {
+    $inc: {
+      estoque: -10
+    }
+  }
+);
+
+// Aumentando em 10% todos os produtos que tenham o campo "preco"
+// $mul: MULtiplica o valor de um campo pela quantia fornecida
+db.produtos.updateMany(
+  { preco: { $exists: true } },
+  {
+    $mul: { preco: 1.1 }
+  }
+);
+
+// Excluindo a "intrusa" "República Francesa"
+db.produtos.deleteOne({ nome_oficial: "República Francesa" });
+
+// Listando todos os produtos que custam mais de R$ 20,00
+// $gt: greater than (maior que)
+// $gte: greater than or equal to (maior que ou igual a)
+// $lt: lesser than (menor que)
+// $lte: lesser than or equal to (menor que ou igual a)
+db.produtos.find({ preco: { $gt: 20 }});
+
+// Listando todos os produtos cujo CNPJ é o do fornecedor indicado
+// ordenado por nome e marca
+// O número na frente do nome dos campos no sort() indica se a
+// ordem será ascendente (1) ou descendente (-1)
+db.produtos.find(
+  { "fornecedor.cnpj": "01.234.567/0001-89" }
+).sort([ { nome: 1 }, { marca: 1 } ]);
+
+// Listando os mesmos produtos acima, mas ordenados por preço
+// em ordem descendente
+db.produtos.find(
+  { "fornecedor.cnpj": "01.234.567/0001-89" }
+).sort({ preco: -1 });
+
+// Excluindo todos os produtos cujo preço é menor que R$ 20,00
+db.produtos.deleteMany({ preco: { $lt: 20 } });
+
+
+  git config --global user.email ""
+  git config --global user.name ""
