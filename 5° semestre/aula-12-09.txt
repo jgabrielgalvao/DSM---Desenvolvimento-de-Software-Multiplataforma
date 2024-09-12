@@ -1,0 +1,30 @@
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances       42042               86.0776 %
+Incorrectly Classified Instances      6800               13.9224 %
+Kappa statistic                          0.5866
+Mean absolute error                      0.1956
+Root mean squared error                  0.3201
+Relative absolute error                 53.7184 %
+Root relative squared error             75.0269 %
+Total Number of Instances            48842     
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.6       0.057      0.768     0.6       0.673      0.89     >50K
+                 0.943     0.4        0.882     0.943     0.912      0.89     <=50K
+Weighted Avg.    0.861     0.318      0.855     0.861     0.855      0.89 
+
+=== Confusion Matrix ===
+
+     a     b   <-- classified as
+  7009  4678 |     a = >50K
+  2122 35033 |     b = <=50K
+
+
+============================================
+
+App used ~> WEKA
+Archive: Adult.arff
